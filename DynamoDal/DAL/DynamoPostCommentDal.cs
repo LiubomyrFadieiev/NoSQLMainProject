@@ -47,7 +47,7 @@ namespace DynamoDal.DAL
             }
             return true;
         }
-        public bool CreatePost(string userid, string body)
+        public string CreatePost(string userid, string body)
         {
             string guid = Guid.NewGuid().ToString();
             string isoTime = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
@@ -70,9 +70,9 @@ namespace DynamoDal.DAL
             }
             catch
             {
-                return false;
+                return "";
             }
-            return true;
+            return guid;
         }
         public bool DeletePost(DynamoPost post)
         {
@@ -122,7 +122,7 @@ namespace DynamoDal.DAL
             }
             return true;
         }
-        public bool CreateComment(string body, DynamoPost parentpost, string userid)
+        public string CreateComment(string body, DynamoPost parentpost, string userid)
         {
             string guid = Guid.NewGuid().ToString();
             string isoTime = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
@@ -146,9 +146,9 @@ namespace DynamoDal.DAL
             }
             catch
             {
-                return false;
+                return "";
             }
-            return true;
+            return guid;
         }
         public bool DeleteComment(DynamoComment comment)
         {
@@ -181,79 +181,69 @@ namespace DynamoDal.DAL
         }
         public List<DynamoPost> GetUserPosts(string user)
         {
-            QueryRequest request = new QueryRequest()
+            var data = context.ScanAsync<DynamoComment>(new List<ScanCondition>()
             {
-                TableName = tableName,
-                KeyConditionExpression = "#user = :id AND attribute_not_exists(CommentId)",
-                ExpressionAttributeNames = new Dictionary<string, string>()
-                {
-                    { "#user","UserId" }
-                },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-                {
-                    {":id", new AttributeValue(){ S = user } }
-                },
-                ScanIndexForward = true
-            };
-            var data = client.QueryAsync(request);
+                new ScanCondition("UserId",ScanOperator.Equal,user),
+                new ScanCondition("CommentId",ScanOperator.IsNull)
+
+            }).GetRemainingAsync();
             data.Wait();
-            var items = data.Result.Items;
-            List<DynamoPost> posts = new List<DynamoPost>();
-            foreach (Dictionary<string, AttributeValue> d in items)
-            {
-                var post = new DynamoPost()
-                {
-                    PK = d["PK"].S,
-                    SK = d["SK"].S,
-                    PostId = d["PostId"].S,
-                    UserId = d["UserId"].S,
-                    PostText = d["PostText"].S,
-                    CreatedDT = d["CreatedDT"].S,
-                    ModifiedDT = d["ModifiedDT"].S,
-                };
-                posts.Add(post);
-            }
+            List<DynamoPost> posts = DynamoPost.ConvertToPost(data.Result);
             return posts;
         }
+        //    QueryRequest request = new QueryRequest()
+        //    {
+        //        TableName = tableName,
+        //        IndexName = "GSI1",
+        //        FilterExpression = "#user = :id",
+        //        ExpressionAttributeNames = new Dictionary<string, string>()
+        //        {
+        //            { "#user","UserId" }
+        //        },
+        //        ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+        //        {
+        //            {":id", new AttributeValue(){ S = user } }
+        //        },
+        //        ScanIndexForward = true
+        //    };
+        //    var data = client.QueryAsync(request);
+        //    data.Wait();
+        //    var items = data.Result.Items;
+        //    List<DynamoPost> posts = new List<DynamoPost>();
+        //    foreach (Dictionary<string, AttributeValue> d in items)
+        //    {
+        //        var post = new DynamoPost()
+        //        {
+        //            PK = d["PK"].S,
+        //            SK = d["SK"].S,
+        //            PostId = d["PostId"].S,
+        //            UserId = d["UserId"].S,
+        //            PostText = d["PostText"].S,
+        //            CreatedDT = d["CreatedDT"].S,
+        //            ModifiedDT = d["ModifiedDT"].S,
+        //        };
+        //        posts.Add(post);
+        //    }
+        //    foreach(DynamoPost p in posts)
+        //    {
+        //        if (p.PK.Contains("COMMENT#"))
+        //        {
+        //            posts.Remove(p);
+        //        }
+        //    }
+        //    return posts;
+        //}
         public List<DynamoComment> GetUserComments(string user)
         {
-            QueryRequest request = new QueryRequest()
+                var data = context.ScanAsync<DynamoComment>(new List<ScanCondition>()
             {
-                TableName = tableName,
-                KeyConditionExpression = "#user = :id AND attribute_exists(CommentId)",
-                ExpressionAttributeNames = new Dictionary<string, string>()
-                {
-                    { "#user","UserId" }
-                },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-                {
-                    {":id", new AttributeValue(){ S = user } }
-                },
-                ScanIndexForward = true
-            };
-            var data = client.QueryAsync(request);
-            data.Wait();
-            var items = data.Result.Items;
-            List<DynamoComment> comments = new List<DynamoComment>();
-            foreach (Dictionary<string, AttributeValue> d in items)
-            {
-                var comment = new DynamoComment()
-                {
-                    PK = d["PK"].S,
-                    SK = d["SK"].S,
-                    CommentId = d["CommentId"].S,
-                    PostId = d["PostId"].S,
-                    UserId = d["UserId"].S,
-                    PostText = d["PostText"].S,
-                    CreatedDT = d["CreatedDT"].S,
-                    ModifiedDT = d["ModifiedDT"].S,
-                    GSI1PK = d["GSI1PK"].S,
-                    GSI1SK = d["GSI1SK"].S
-                };
-                comments.Add(comment);
+                new ScanCondition("UserId",ScanOperator.Equal,user),
+                new ScanCondition("CommentId",ScanOperator.IsNotNull)
+
+            }).GetRemainingAsync();
+                data.Wait();
+                return data.Result;
             }
-            return comments;
-        }
         public List<DynamoComment> GetCommentsForPost(DynamoPost post)
         {
             string postComment = "POSTCOMMENT#" + post.PostId;

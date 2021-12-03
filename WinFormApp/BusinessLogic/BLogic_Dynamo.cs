@@ -33,11 +33,17 @@ namespace WinFormApp.BusinessLogic
         }
         public bool InsertPost(MongoUser user, string body)
         {
-            return dpDal.CreatePost(user.nickname, body);
+            string guid = dpDal.CreatePost(user.nickname, body);
+            guid = "POST#" + guid;
+            mpDal.InsertPost(guid);
+            return true;
         }
         public bool InsertComment(DynamoPost post, MongoUser user, string body)
         {
-            return dpDal.CreateComment(body, post, user.nickname);
+            string guid = dpDal.CreateComment(body, post, user.nickname);
+            guid = "COMMENT#" + guid;
+            mpDal.InsertPost(guid);
+            return true;
         }
         public (bool, DynamoPost) GetParentPost(DynamoPost comment)
         {

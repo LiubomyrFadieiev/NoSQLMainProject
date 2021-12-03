@@ -22,15 +22,17 @@ namespace WinFormApp.Forms
             currentPost = new BLPost(post, bl.GetPostByKey(post.PK));
             displayPostComments = 0;
             (bool, DynamoPost) parentPost = bl.GetParentPost(currentPost.mainPost);
+            BLPost parentBLPost = new BLPost(parentPost.Item2);
             InitializeComponent();
             if (parentPost.Item1)
             {
-                postMenuParent.Text = parentPost.Item2.ToString();
+                postMenuParent.Text = parentBLPost.ToString();
             }
             streamComments = bl.GetPostsComments(currentPost.mainPost);
             SetStreamComments(displayPostComments);
 
-            postMenuThis.Text = post.ToString();
+
+            postMenuThis.Text = currentPost.ToString();
             if (currentPost.addPost.likes.IndexOf(currentUser.nickname) != -1)
             {
                 likePost.Text = "unlike";
@@ -75,6 +77,7 @@ namespace WinFormApp.Forms
             bl.InsertPost(currentUser, body);
             bl.InsertComment(currentPost.mainPost, currentUser, body);
             streamComments = bl.GetPostsComments(currentPost.mainPost);
+            
         }
 
         private void likePost_Click(object sender, EventArgs e)

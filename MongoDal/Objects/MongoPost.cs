@@ -14,59 +14,41 @@ namespace MongoDal.Objects
         [BsonElement("_id")]
         public ObjectId _id { get; set; }
         [BsonElement("id")]
-        public int postid { get; set; }
-        [BsonElement("isComment")]
-        public bool isComment { get; set; }
-        [BsonIgnoreIfDefault]
-        public string answerTo { get; set; }
-        [BsonElement("author")]
-        public string author { get; set; }
-        [BsonElement("time")]
-        public string time { get; set; }
-        [BsonElement("body")]
-        public string body { get; set; }
+        public string id { get; set; }
         [BsonElement("likes")]
         public List<string> likes { get; set; }
-        [BsonElement("commentsId")]
-        public List<int> comments { get; set; }
         public MongoPost()
         {
-            this.postid = default;
-            this.author = default;
-            this.time = default;
-            this.answerTo = default;
-            this.isComment = default;
-            this.body = default;
+            this.id = default;
             this.likes = default;
 
         }
-        public MongoPost(int id, MongoUser user, string body, string parentAuthor = "")
+        public MongoPost(string guid)
         {
-            this.postid = id;
-            this.author = user.nickname;
-            this.time = DateTime.UtcNow.ToString();
-            this.answerTo = parentAuthor;
-            this.isComment = parentAuthor != "";
-            this.body = body;
+            this.id = guid;
             this.likes = new List<string>();
         }
-        public void TakeTimezonesAway()
+        public override string ToString()
         {
-            string[] newtime = time.Split('G');
-            time = newtime[0];
+            return "Likes: " + likes.Count.ToString();
         }
-        public string SetString()
-        {
-            if (!isComment)
-            {
-                string format = String.Format("@{0}\nWritten at {1}\n{2}\n\t{3} likes", author, time, body, likes.Count());
-                return format;
-            }
-            else
-            {
-                string format = String.Format("@{0}\nWritten at {1}\nAnswer to: @{2}\n{3}\n\t{4} likes", author, time, answerTo, body, likes.Count());
-                return format;
-            }
-        }
+        //public void TakeTimezonesAway()
+        //{
+        //    string[] newtime = time.Split('G');
+        //    time = newtime[0];
+        //}
+        //public string SetString()
+        //{
+        //    if (!isComment)
+        //    {
+        //        string format = String.Format("@{0}\nWritten at {1}\n{2}\n\t{3} likes", author, time, body, likes.Count());
+        //        return format;
+        //    }
+        //    else
+        //    {
+        //        string format = String.Format("@{0}\nWritten at {1}\nAnswer to: @{2}\n{3}\n\t{4} likes", author, time, answerTo, body, likes.Count());
+        //        return format;
+        //    }
+        //}
     }
 }

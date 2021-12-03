@@ -16,9 +16,15 @@ namespace WinFormApp.BusinessLogic
             mainPost = dPost;
             addPost = post;
         }
+        public BLPost(DynamoPost dPost)
+        {
+            BLogic bl = new BLogic();
+            mainPost = dPost;
+            addPost = bl.GetPostByKey(dPost.PK);
+        }
         public override string ToString()
         {
-            return mainPost.ToString();
+            return mainPost.ToString() + "\n" + addPost.ToString();
         }
 
         public List<string> GetLikes()

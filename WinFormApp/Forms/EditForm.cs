@@ -15,9 +15,9 @@ namespace WinFormApp.Forms
         private DynamoPost editPost;
         public EditForm(DynamoPost post)
         {
+            InitializeComponent();
             editPost = post;
             postTextBox.Text = editPost.PostText;
-            InitializeComponent();
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
