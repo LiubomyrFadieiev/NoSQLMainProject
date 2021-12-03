@@ -16,7 +16,7 @@ namespace WinFormApp.Forms
 {
     public partial class LogInForm : Form
     {
-        public User currentUser { get; set; }
+        public MongoUser currentUser { get; set; }
         public LogInForm()
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace WinFormApp.Forms
             BLogic bl = new BLogic();
             string logIn = logText.Text;
             string pass = passText.Text;
-            (bool, User) ourUser = bl.Authorize(logIn, pass);
+            (bool, MongoUser) ourUser = bl.Authorize(logIn, pass);
             if (ourUser.Item1)
             {
                 currentUser = ourUser.Item2;

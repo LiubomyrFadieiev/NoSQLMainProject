@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MongoDal.Objects
 {
-    public class User
+    public class MongoUser
     {
         [BsonId]
         [BsonElement("id")]
@@ -28,7 +28,7 @@ namespace MongoDal.Objects
         [BsonElement("follows")]
         public List<string> follows { get; set; }
 
-        public User()
+        public MongoUser()
         {
             firstName = "";
             lastName = "";

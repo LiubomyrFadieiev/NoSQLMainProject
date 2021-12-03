@@ -13,9 +13,9 @@ namespace WinFormApp.BusinessLogic
     public partial class BLogic
     {
         //find user by login and password
-        public (bool, User) Authorize(string credit, string password)
+        public (bool, MongoUser) Authorize(string credit, string password)
         {
-            User user = muDal.GetUserByLogIn(password, credit);
+            MongoUser user = muDal.GetUserByLogIn(password, credit);
             if (user.firstName != "")
             {
                 return (true, user);
@@ -29,7 +29,7 @@ namespace WinFormApp.BusinessLogic
         //{
         //    mpDal.UpdateComments(post, user, body);
         //}
-        public void SetLikes(Post post)
+        public void SetLikes(MongoPost post)
         {
             mpDal.SetLikes(post);
         }
@@ -37,7 +37,7 @@ namespace WinFormApp.BusinessLogic
         {
             return muDal.GetUserByNickName(nickname);
         }
-        public Post GetPostByKey(string key)
+        public MongoPost GetPostByKey(string key)
         {
             return mpDal.GetPostById(key);
         }

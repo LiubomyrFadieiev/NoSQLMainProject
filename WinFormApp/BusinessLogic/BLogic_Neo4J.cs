@@ -22,7 +22,7 @@ namespace WinFormApp.BusinessLogic
             List<NeoUser> list = nuDal.GetFollows(name);
             return list.Count();
         }
-        public void SetFollowsList(User user, string follows, string action)
+        public void SetFollowsList(MongoUser user, string follows, string action)
         {
             if (action == "add")
             {

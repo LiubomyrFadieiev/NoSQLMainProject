@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MongoDal.Objects
 {
-    public class Post
+    public class MongoPost
     {
         [BsonId]
         [BsonElement("_id")]
@@ -29,7 +29,7 @@ namespace MongoDal.Objects
         public List<string> likes { get; set; }
         [BsonElement("commentsId")]
         public List<int> comments { get; set; }
-        public Post()
+        public MongoPost()
         {
             this.postid = default;
             this.author = default;
@@ -40,7 +40,7 @@ namespace MongoDal.Objects
             this.likes = default;
 
         }
-        public Post(int id, User user, string body, string parentAuthor = "")
+        public MongoPost(int id, MongoUser user, string body, string parentAuthor = "")
         {
             this.postid = id;
             this.author = user.nickname;

@@ -17,7 +17,7 @@ namespace WinFormApp.Forms
     public partial class MainForm : Form
     {
         BLogic bl;
-        private User currentUser { get; set; }
+        private MongoUser currentUser { get; set; }
 
         private int displayPost;
         private int displaySearchPost;
@@ -46,7 +46,7 @@ namespace WinFormApp.Forms
                 }
             }
         }
-        public void SetCurrentUser(User user)
+        public void SetCurrentUser(MongoUser user)
         {
             this.currentUser = user;
         }

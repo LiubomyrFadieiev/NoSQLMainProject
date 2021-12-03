@@ -9,7 +9,7 @@ namespace WinFormApp.BusinessLogic
 {
     public partial class BLogic
     {
-        public List<DynamoPost> GetPostsForStream(User user)
+        public List<DynamoPost> GetPostsForStream(MongoUser user)
         {
             List<DynamoPost> posts = new List<DynamoPost>();
             List<string> people = user.follows;
@@ -31,11 +31,11 @@ namespace WinFormApp.BusinessLogic
             posts.AddRange(dpDal.GetUserPosts(nickname));
             return posts;
         }
-        public bool InsertPost(User user, string body)
+        public bool InsertPost(MongoUser user, string body)
         {
             return dpDal.CreatePost(user.nickname, body);
         }
-        public bool InsertComment(DynamoPost post, User user, string body)
+        public bool InsertComment(DynamoPost post, MongoUser user, string body)
         {
             return dpDal.CreateComment(body, post, user.nickname);
         }

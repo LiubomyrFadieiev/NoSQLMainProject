@@ -20,49 +20,49 @@ namespace MongoDal.DAL
             this.connString = connString;
         }
         //get posts for tab "Stream" (posts of followed users + this user's posts)
-        public List<Post> GetPostForStream(User currentUser)
+        public List<MongoPost> GetPostForStream(MongoUser currentUser)
         {
             List<string> follows = currentUser.follows;
             follows.Add(currentUser.nickname);
-            List<Post> stream = new List<Post>();
+            List<MongoPost> stream = new List<MongoPost>();
 
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
-            FilterDefinition<Post> filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
+            FilterDefinition<MongoPost> filter;
 
             foreach (string str in follows)
             {
                 filter = filterBuilder.Eq("author", str);
-                var posts = postsCollection.Find(filter).Sort("{time:-1}").ToList<Post>();
+                var posts = postsCollection.Find(filter).Sort("{time:-1}").ToList<MongoPost>();
                 stream.AddRange(posts);
             }
-            foreach (Post p in stream)
+            foreach (MongoPost p in stream)
             {
                 p.TakeTimezonesAway();
             }
 
-            stream.Sort(delegate (Post p1, Post p2) {
+            stream.Sort(delegate (MongoPost p1, MongoPost p2) {
                 return Convert.ToDateTime(p1.time).CompareTo(Convert.ToDateTime(p2.time));
             });
 
             return stream;
         }
         //get posts of current user
-        public List<Post> GetUserPosts(string username)
+        public List<MongoPost> GetUserPosts(string username)
         {
-            List<Post> stream = new List<Post>();
+            List<MongoPost> stream = new List<MongoPost>();
 
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
 
             var filter = filterBuilder.Eq("author", username);
-            var posts = postCollection.Find(filter).Sort("{time:-1}").ToList<Post>();
+            var posts = postCollection.Find(filter).Sort("{time:-1}").ToList<MongoPost>();
             stream.AddRange(posts);
-            foreach (Post p in stream)
+            foreach (MongoPost p in stream)
             {
                 p.TakeTimezonesAway();
             }
@@ -70,13 +70,13 @@ namespace MongoDal.DAL
             return stream;
         }
         //insert in DB new post
-        public void InsertPost(User user, string body)
+        public void InsertPost(MongoUser user, string body)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
 
-            Post insertPost = new Post(GetMaxId() + 1, user, body);
+            MongoPost insertPost = new MongoPost(GetMaxId() + 1, user, body);
 
             postsCollection.InsertOne(insertPost);
         }
@@ -85,26 +85,26 @@ namespace MongoDal.DAL
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
             BsonDocument filter = new BsonDocument();
 
             var post = postsCollection.Find(filter).Sort("{id:-1}").FirstOrDefault();
             return post.postid;
         }
         //get patent post (post, for which our post is a comment)
-        public (bool, Post) GetParentPost(Post post)
+        public (bool, MongoPost) GetParentPost(MongoPost post)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
 
             var filter = filterBuilder.Eq("commentsId", post.postid);
             var posts = postsCollection.Find(filter).ToList();
 
             if (posts.Count == 0)
             {
-                return (false, new Post());
+                return (false, new MongoPost());
             }
             else
             {
@@ -112,14 +112,14 @@ namespace MongoDal.DAL
             }
         }
         //get comments of current post
-        public List<Post> GetPostComments(Post post)
+        public List<MongoPost> GetPostComments(MongoPost post)
         {
-            List<Post> stream = new List<Post>();
+            List<MongoPost> stream = new List<MongoPost>();
 
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
 
             foreach (int postid in post.comments)
             {
@@ -130,38 +130,38 @@ namespace MongoDal.DAL
             return stream;
         }
         //isert new post and add it to our post's comment list
-        public void UpdateComments(Post post, User user, string body)
+        public void UpdateComments(MongoPost post, MongoUser user, string body)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
 
-            Post insertComment = new Post(GetMaxId() + 1, user, body, post.author);
+            MongoPost insertComment = new MongoPost(GetMaxId() + 1, user, body, post.author);
             postsCollection.InsertOne(insertComment);
 
             var filter = filterBuilder.Eq("id", post.postid);
-            var updateDefinition = Builders<Post>.Update.AddToSet("commentsId", insertComment.postid);
+            var updateDefinition = Builders<MongoPost>.Update.AddToSet("commentsId", insertComment.postid);
             var updateResult = postsCollection.UpdateOne(filter, updateDefinition);
         }
         //set new likes list
-        public void SetLikes(Post post)
+        public void SetLikes(MongoPost post)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
             var filter = filterBuilder.Eq("id", post.postid);
 
-            var updateDefinition = Builders<Post>.Update.Set("likes", post.likes);
+            var updateDefinition = Builders<MongoPost>.Update.Set("likes", post.likes);
             var updateResult = postsCollection.UpdateOne(filter, updateDefinition);
         }
-        public Post GetPostById(string id)
+        public MongoPost GetPostById(string id)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<Post> postsCollection = database.GetCollection<Post>("posts");
-            var filterBuilder = Builders<Post>.Filter;
+            IMongoCollection<MongoPost> postsCollection = database.GetCollection<MongoPost>("posts");
+            var filterBuilder = Builders<MongoPost>.Filter;
             var filter = filterBuilder.Eq("id", id);
 
             var posts = postsCollection.Find(filter).ToList();

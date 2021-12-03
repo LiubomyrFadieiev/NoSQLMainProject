@@ -19,7 +19,7 @@ namespace MongoDal.DAL
             this.connString = connString;
         }
         //find user with this login and password (return default-user if not found)
-        public User GetUserByLogIn(string password, string login)
+        public MongoUser GetUserByLogIn(string password, string login)
         {
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
@@ -31,11 +31,11 @@ namespace MongoDal.DAL
 
             if (posts.Count() != 0)
             {
-                return BsonSerializer.Deserialize<User>(posts[0]);
+                return BsonSerializer.Deserialize<MongoUser>(posts[0]);
             }
             else
             {
-                return new User();
+                return new MongoUser();
             }
 
         }
@@ -56,7 +56,7 @@ namespace MongoDal.DAL
             }
             else
             {
-                User user = BsonSerializer.Deserialize<User>(posts[0]);
+                MongoUser user = BsonSerializer.Deserialize<MongoUser>(posts[0]);
 
                 string[] ourData = new string[2];
                 ourData[0] = user.firstName;
@@ -77,18 +77,18 @@ namespace MongoDal.DAL
             return usersBsonCollection.CountDocuments(filter);
         }
         //set new follows list for user
-        public void SetFollowsList(User user, List<string> list)
+        public void SetFollowsList(MongoUser user, List<string> list)
         {
-            List<User> stream = new List<User>();
+            List<MongoUser> stream = new List<MongoUser>();
             List<BsonDocument> bsonStream = new List<BsonDocument>();
             var client = new MongoClient(connString);
             var database = client.GetDatabase("NoSQLTask");
-            IMongoCollection<User> usersBsonCollection = database.GetCollection<User>("users");
-            var filterBuilder = Builders<User>.Filter;
-            FilterDefinition<User> filter;
+            IMongoCollection<MongoUser> usersBsonCollection = database.GetCollection<MongoUser>("users");
+            var filterBuilder = Builders<MongoUser>.Filter;
+            FilterDefinition<MongoUser> filter;
 
             filter = filterBuilder.Eq("nickname", user.nickname);
-            var updateDefinition = Builders<User>.Update.Set("follows", list);
+            var updateDefinition = Builders<MongoUser>.Update.Set("follows", list);
             var updateResult = usersBsonCollection.UpdateOne(filter, updateDefinition);
         }
     }

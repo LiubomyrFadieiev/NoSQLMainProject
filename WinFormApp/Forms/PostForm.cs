@@ -10,12 +10,12 @@ namespace WinFormApp.Forms
     public partial class PostForm : Form
     {
         BLogic bl;
-        private User currentUser;
+        private MongoUser currentUser;
         private BLPost currentPost;
 
         private int displayPostComments;
         private List<DynamoComment> streamComments;
-        public PostForm(User user, DynamoPost post)
+        public PostForm(MongoUser user, DynamoPost post)
         {
             bl = new BLogic();
             currentUser = user;

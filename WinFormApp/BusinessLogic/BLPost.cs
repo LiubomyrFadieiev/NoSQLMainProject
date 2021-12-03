@@ -9,9 +9,9 @@ namespace WinFormApp.BusinessLogic
     public class BLPost
     {
         public DynamoPost mainPost;
-        public Post addPost;
+        public MongoPost addPost;
 
-        public BLPost(DynamoPost dPost, Post post)
+        public BLPost(DynamoPost dPost, MongoPost post)
         {
             mainPost = dPost;
             addPost = post;
