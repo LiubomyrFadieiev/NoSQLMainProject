@@ -10,6 +10,7 @@ using NeoDal.Objects;
 using NeoDal.DAL;
 using DynamoDal.Objects;
 using DynamoDal.DAL;
+using RedisDAL.DAL;
 
 namespace WinFormApp.BusinessLogic
 {
@@ -20,6 +21,8 @@ namespace WinFormApp.BusinessLogic
         MongoUserDal muDal;
         MongoPostDal mpDal;
         DynamoPostCommentDal dpDal;
+        RedisDal rpDal;
+        List<string> keys;
 
         //constructor
         public BLogic()
@@ -33,6 +36,8 @@ namespace WinFormApp.BusinessLogic
             muDal = new MongoUserDal(connString);
             mpDal = new MongoPostDal(connString);
             dpDal = new DynamoPostCommentDal();
+            rpDal = new RedisDal("localhost");
+            keys = new List<string>();
         }
     }
 }

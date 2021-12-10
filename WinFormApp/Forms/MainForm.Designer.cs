@@ -72,6 +72,8 @@ namespace WinFormApp.Forms
             this.userFollows = new System.Windows.Forms.TextBox();
             this.userNickname = new System.Windows.Forms.TextBox();
             this.userFullName = new System.Windows.Forms.TextBox();
+            this.createDraft = new System.Windows.Forms.Button();
+            this.listDraft = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.streamTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -414,6 +416,8 @@ namespace WinFormApp.Forms
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.listDraft);
+            this.splitContainer3.Panel1.Controls.Add(this.createDraft);
             this.splitContainer3.Panel1.Controls.Add(this.edit1Button);
             this.splitContainer3.Panel1.Controls.Add(this.edit0Button);
             this.splitContainer3.Panel1.Controls.Add(this.user1Button);
@@ -469,7 +473,8 @@ namespace WinFormApp.Forms
             // 
             // publishButton
             // 
-            this.publishButton.Location = new System.Drawing.Point(169, 299);
+            this.publishButton.Enabled = false;
+            this.publishButton.Location = new System.Drawing.Point(193, 298);
             this.publishButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.publishButton.Name = "publishButton";
             this.publishButton.Size = new System.Drawing.Size(100, 68);
@@ -528,6 +533,7 @@ namespace WinFormApp.Forms
             this.publishText.Size = new System.Drawing.Size(454, 198);
             this.publishText.TabIndex = 16;
             this.publishText.Text = "";
+            this.publishText.TextChanged += new System.EventHandler(this.publishText_TextChanged);
             // 
             // userPost0
             // 
@@ -584,6 +590,26 @@ namespace WinFormApp.Forms
             this.userFullName.ReadOnly = true;
             this.userFullName.Size = new System.Drawing.Size(684, 31);
             this.userFullName.TabIndex = 9;
+            // 
+            // createDraft
+            // 
+            this.createDraft.Enabled = false;
+            this.createDraft.Location = new System.Drawing.Point(60, 296);
+            this.createDraft.Name = "createDraft";
+            this.createDraft.Size = new System.Drawing.Size(127, 34);
+            this.createDraft.TabIndex = 19;
+            this.createDraft.Text = "Create Draft";
+            this.createDraft.UseVisualStyleBackColor = true;
+            this.createDraft.Click += new System.EventHandler(this.createDraft_Click);
+            // 
+            // listDraft
+            // 
+            this.listDraft.Location = new System.Drawing.Point(60, 332);
+            this.listDraft.Name = "listDraft";
+            this.listDraft.Size = new System.Drawing.Size(127, 34);
+            this.listDraft.TabIndex = 20;
+            this.listDraft.Text = "Draft List";
+            this.listDraft.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -663,5 +689,7 @@ namespace WinFormApp.Forms
         private System.Windows.Forms.Button lengthButton;
         private System.Windows.Forms.Button edit1Button;
         private System.Windows.Forms.Button edit0Button;
+        private System.Windows.Forms.Button listDraft;
+        private System.Windows.Forms.Button createDraft;
     }
 }

@@ -13,9 +13,11 @@ namespace WinFormApp.Forms
     public partial class EditForm : Form
     {
         private DynamoPost editPost;
-        public EditForm(DynamoPost post)
+        private BLogic bl;
+        public EditForm(BLogic bl, DynamoPost post)
         {
             InitializeComponent();
+            this.bl = bl;
             editPost = post;
             postTextBox.Text = editPost.PostText;
         }
@@ -27,7 +29,6 @@ namespace WinFormApp.Forms
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            BLogic bl = new BLogic();
             if (editPost.PK.Contains("POST"))
             {
                 bl.UpdatePost(editPost, postTextBox.Text);

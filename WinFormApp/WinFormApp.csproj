@@ -10,6 +10,7 @@
     <ProjectReference Include="..\DynamoDal\DynamoDal.csproj" />
     <ProjectReference Include="..\MongoDal\MongoDal.csproj" />
     <ProjectReference Include="..\NeoDal\NeoDal.csproj" />
+    <ProjectReference Include="..\RedisDAL\RedisDAL.csproj" />
   </ItemGroup>
 
 </Project>

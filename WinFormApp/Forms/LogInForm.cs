@@ -17,14 +17,15 @@ namespace WinFormApp.Forms
     public partial class LogInForm : Form
     {
         public MongoUser currentUser { get; set; }
-        public LogInForm()
+        private BLogic bl;
+        public LogInForm(BLogic bl)
         {
             InitializeComponent();
+            this.bl = bl;
         }
 
         private void logButton_Click(object sender, EventArgs e)
         {
-            BLogic bl = new BLogic();
             string logIn = logText.Text;
             string pass = passText.Text;
             (bool, MongoUser) ourUser = bl.Authorize(logIn, pass);

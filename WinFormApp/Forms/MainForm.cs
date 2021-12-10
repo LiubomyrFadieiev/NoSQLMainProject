@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Configuration;
+﻿using DynamoDal.Objects;
 using MongoDal.Objects;
-using DynamoDal.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using WinFormApp.BusinessLogic;
 
 namespace WinFormApp.Forms
@@ -33,7 +27,7 @@ namespace WinFormApp.Forms
                 displayPost = 0;
                 displaySearchPost = 0;
                 displayUserPost = 0;
-                var login = new LogInForm();
+                var login = new LogInForm(bl);
                 var log = login.ShowDialog();
                 if (log == DialogResult.OK)
                 {
@@ -180,42 +174,42 @@ namespace WinFormApp.Forms
 
         private void post0Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, stream[Math.Abs((displayPost + 0) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, stream[Math.Abs((displayPost + 0) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
 
         private void post1Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, stream[Math.Abs((displayPost + 1) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, stream[Math.Abs((displayPost + 1) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
 
         private void search0Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, searchStream[Math.Abs((displaySearchPost + 0) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, searchStream[Math.Abs((displaySearchPost + 0) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
 
         private void search1Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, searchStream[Math.Abs((displaySearchPost + 1) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, searchStream[Math.Abs((displaySearchPost + 1) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
 
         private void user0Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, userStream[Math.Abs((displayUserPost + 0) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, userStream[Math.Abs((displayUserPost + 0) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
 
         private void user1Button_Click(object sender, EventArgs e)
         {
-            PostForm post = new PostForm(currentUser, userStream[Math.Abs((displayUserPost + 1) % stream.Count)]);
+            PostForm post = new PostForm(bl, currentUser, userStream[Math.Abs((displayUserPost + 1) % stream.Count)]);
             post.Show();
             UpdateStream();
         }
@@ -233,9 +227,9 @@ namespace WinFormApp.Forms
 
         private void edit0Button_Click(object sender, EventArgs e)
         {
-            EditForm post = new EditForm(userStream[Math.Abs((displayUserPost + 0) % stream.Count)]);
+            EditForm post = new EditForm(bl, userStream[Math.Abs((displayUserPost + 0) % stream.Count)]);
             post.ShowDialog();
-            if(post.DialogResult == DialogResult.OK)
+            if (post.DialogResult == DialogResult.OK)
             {
                 MessageBox.Show("This post was modified successfully");
             }
@@ -244,13 +238,25 @@ namespace WinFormApp.Forms
 
         private void edit1Button_Click(object sender, EventArgs e)
         {
-            EditForm post = new EditForm(userStream[Math.Abs((displayUserPost + 1) % stream.Count)]);
+            EditForm post = new EditForm(bl, userStream[Math.Abs((displayUserPost + 1) % stream.Count)]);
             post.ShowDialog();
             if (post.DialogResult == DialogResult.OK)
             {
                 MessageBox.Show("This post was modified successfully");
             }
             UpdateStream();
+        }
+
+        private void createDraft_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void publishText_TextChanged(object sender, EventArgs e)
+        {
+            publishButton.Enabled = publishText.Text != String.Empty;
+            createDraft.Enabled = publishText.Text != String.Empty;
+
         }
     }
 }

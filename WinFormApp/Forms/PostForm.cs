@@ -15,9 +15,9 @@ namespace WinFormApp.Forms
 
         private int displayPostComments;
         private List<DynamoComment> streamComments;
-        public PostForm(MongoUser user, DynamoPost post)
+        public PostForm(BLogic bl, MongoUser user, DynamoPost post)
         {
-            bl = new BLogic();
+            this.bl = bl;
             currentUser = user;
             currentPost = new BLPost(post, bl.GetPostByKey(post.PK));
             displayPostComments = 0;
